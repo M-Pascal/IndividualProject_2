@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-class WatchListPage extends StatefulWidget {
-  const WatchListPage({super.key});
+class WatchListPage extends StatelessWidget {
+  final List<dynamic> watchListMovies;
 
-  @override
-  State<WatchListPage> createState() => _WatchListPageState();
-}
+  const WatchListPage({Key? key, required this.watchListMovies})
+      : super(key: key);
 
-class _WatchListPageState extends State<WatchListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,12 +15,8 @@ class _WatchListPageState extends State<WatchListPage> {
         titleSpacing: 20,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.movie,
-              color: Colors.white,
-              size: 30,
-            ),
+          children: const [
+            Icon(Icons.movie, color: Colors.white, size: 30),
             SizedBox(width: 10),
             Text(
               'WATCH_LIST',
@@ -30,13 +24,24 @@ class _WatchListPageState extends State<WatchListPage> {
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 24,
-                fontStyle: FontStyle.italic
-                ),
+                fontStyle: FontStyle.italic,
               ),
+            ),
           ],
         ),
-        
       ),
+      body: watchListMovies.isEmpty
+          ? const Center(child: Text('No movies in watchlist!'))
+          : ListView.builder(
+              itemCount: watchListMovies.length,
+              itemBuilder: (context, index) {
+                final movie = watchListMovies[index];
+                return ListTile(
+                  leading: Image.network(movie['thumbnail']),
+                  title: Text(movie['title']),
+                );
+              },
+            ),
     );
   }
 }

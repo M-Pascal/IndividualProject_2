@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-class FavoritePage extends StatefulWidget {
-  const FavoritePage({super.key});
+class FavoritePage extends StatelessWidget {
+  final List<dynamic> favoriteMovies;
 
-  @override
-  State<FavoritePage> createState() => _FavoritePageState();
-}
+  const FavoritePage({Key? key, required this.favoriteMovies})
+      : super(key: key);
 
-class _FavoritePageState extends State<FavoritePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,12 +15,8 @@ class _FavoritePageState extends State<FavoritePage> {
         titleSpacing: 20,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.movie,
-              color: Colors.white,
-              size: 30,
-            ),
+          children: const [
+            Icon(Icons.movie, color: Colors.white, size: 30),
             SizedBox(width: 10),
             Text(
               'MY_FAVORITES',
@@ -30,13 +24,24 @@ class _FavoritePageState extends State<FavoritePage> {
                 color: Colors.white,
                 fontWeight: FontWeight.w800,
                 fontSize: 24,
-                fontStyle: FontStyle.italic
-                ),
+                fontStyle: FontStyle.italic,
               ),
+            ),
           ],
         ),
-        
       ),
+      body: favoriteMovies.isEmpty
+          ? const Center(child: Text('No favorites yet!'))
+          : ListView.builder(
+              itemCount: favoriteMovies.length,
+              itemBuilder: (context, index) {
+                final movie = favoriteMovies[index];
+                return ListTile(
+                  leading: Image.network(movie['thumbnail']),
+                  title: Text(movie['title']),
+                );
+              },
+            ),
     );
   }
 }

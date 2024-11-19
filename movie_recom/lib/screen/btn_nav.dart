@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recom/screen/homepage.dart';
 import 'package:movie_recom/screen/favorite.dart';
-import 'package:movie_recom/screen/search.dart';
+import 'package:movie_recom/screen/homepage.dart';
+import 'package:movie_recom/screen/info_page.dart';
 import 'package:movie_recom/screen/watchlist.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
@@ -13,21 +13,31 @@ class BtnNavigator extends StatefulWidget {
 }
 
 class _BtnNavigatorState extends State<BtnNavigator> {
-  // Tracks the current index of the bottom navigation bar
   int _selectedIndex = 0;
 
-  // List of pages to display for each navigation tab
-  final List<Widget> _pages = [
-    Homepage(),
-    SearchPage(),
-    FavoritePage(),
-    WatchListPage(),
-  ];
+  // Mock lists for favorite and watchlist movies
+  final List<dynamic> _favoriteMovies = [];
+  final List<dynamic> _watchListMovies = [];
+
+  // A placeholder movie object to pass to InfoPage (you can replace it with real movie data later)
+  final dynamic _placeholderMovie = {
+    'title': 'Placeholder Movie',
+    'image': 'https://via.placeholder.com/150',
+    'description': 'This is a placeholder description.',
+    'genre': ['Drama', 'Action']
+  };
 
   @override
   Widget build(BuildContext context) {
+    // List of pages with required parameters provided
+    final List<Widget> _pages = [
+      const Homepage(),
+      InfoPage(movie: _placeholderMovie), // Pass a placeholder movie
+      FavoritePage(favoriteMovies: _favoriteMovies),
+      WatchListPage(watchListMovies: _watchListMovies),
+    ];
+
     return Scaffold(
-      // IndexedStack keeps the state of each page and only shows the selected page
       body: IndexedStack(
         index: _selectedIndex,
         children: _pages,
@@ -45,15 +55,14 @@ class _BtnNavigatorState extends State<BtnNavigator> {
             activeColor: Colors.white,
             color: Colors.white,
             tabBackgroundColor: Colors.indigo.shade600,
-            padding: EdgeInsets.all(13),
-            // Updates _selectedIndex when a new tab is tapped
+            padding: const EdgeInsets.all(13),
             selectedIndex: _selectedIndex,
             onTabChange: (index) {
               setState(() {
                 _selectedIndex = index;
               });
             },
-            tabs: [
+            tabs: const [
               GButton(
                 icon: Icons.home,
                 text: 'Home',
@@ -73,23 +82,6 @@ class _BtnNavigatorState extends State<BtnNavigator> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-// Placeholder widget for pages not yet implemented
-class PlaceholderWidget extends StatelessWidget {
-  final String text;
-
-  const PlaceholderWidget(this.text, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        text,
-        style: TextStyle(fontSize: 24, color: Colors.grey),
       ),
     );
   }
