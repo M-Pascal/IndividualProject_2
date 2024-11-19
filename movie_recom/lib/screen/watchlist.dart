@@ -15,20 +15,27 @@ class _WatchListPageState extends State<WatchListPage> {
         toolbarHeight: 100,
         backgroundColor: Colors.indigo.shade900,
         titleSpacing: 20,
-        title: Text(
-          'WATCH LIST',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            fontSize: 24,
-            fontStyle: FontStyle.italic
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.movie,
+              color: Colors.white,
+              size: 30,
             ),
-          ),
-        leading: Icon(
-          Icons.menu,
-          color: Colors.white,
-          size: 30,
+            SizedBox(width: 10),
+            Text(
+              'WATCH_LIST',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 24,
+                fontStyle: FontStyle.italic
+                ),
+              ),
+          ],
         ),
+        
       ),
     );
   }

@@ -15,19 +15,25 @@ class _SearchPageState extends State<SearchPage> {
         toolbarHeight: 100,
         backgroundColor: Colors.indigo.shade900,
         titleSpacing: 20,
-        title: Text(
-          'DETAILS...',
-          style: TextStyle(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.movie,
+              color: Colors.white,
+              size: 30,
+            ),
+            SizedBox(width: 10),
+            Text(
+              'DETAILS...',
+              style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w800,
             fontSize: 24,
             fontStyle: FontStyle.italic
             ),
-          ),
-        leading: Icon(
-          Icons.menu,
-          color: Colors.white,
-          size: 30,
+            )
+          ],
         ),
       ),
 
@@ -39,7 +45,7 @@ class _SearchPageState extends State<SearchPage> {
             // Search bar
             TextField(
               decoration: InputDecoration(
-                hintText: 'Search for a song...',
+                hintText: 'Search for a movie...',
                 hintStyle: TextStyle(
                   color: Colors.grey,
                 ),

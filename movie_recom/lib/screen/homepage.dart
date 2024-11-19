@@ -25,20 +25,27 @@ class _HomepageState extends State<Homepage> {
         toolbarHeight: 100,
         backgroundColor: Colors.indigo.shade900,
         titleSpacing: 20,
-        title: Text(
-          'MOVIE_GET',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w800,
-            fontSize: 24,
-            fontStyle: FontStyle.italic
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.movie,
+              color: Colors.white,
+              size: 30,
             ),
-          ),
-        leading: Icon(
-          Icons.menu,
-          color: Colors.white,
-          size: 30,
+            SizedBox(width: 10),
+            Text(
+              'MOVIE_GET',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w800,
+                fontSize: 24,
+                fontStyle: FontStyle.italic
+                ),
+              ),
+          ],
         ),
+        
       ),
 
       body: ListView(),
