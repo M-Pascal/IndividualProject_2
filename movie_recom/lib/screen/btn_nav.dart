@@ -1,40 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:movie_recom/screen/favorite.dart';
-import 'package:movie_recom/screen/homepage.dart';
-import 'package:movie_recom/screen/info_page.dart';
-import 'package:movie_recom/screen/watchlist.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'homepage.dart';
+import 'moviepage.dart';
+import 'watchlist.dart';
 
 class BtnNavigator extends StatefulWidget {
-  const BtnNavigator({super.key});
+  final int initialIndex; // To handle navigation from the Get Started button
+  const BtnNavigator({super.key, this.initialIndex = 0});
 
   @override
   State<BtnNavigator> createState() => _BtnNavigatorState();
 }
 
 class _BtnNavigatorState extends State<BtnNavigator> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
 
-  // Mock lists for favorite and watchlist movies
-  final List<dynamic> _favoriteMovies = [];
-  final List<dynamic> _watchListMovies = [];
-
-  // A placeholder movie object to pass to InfoPage (you can replace it with real movie data later)
-  final dynamic _placeholderMovie = {
-    'title': 'Placeholder Movie',
-    'image': 'https://via.placeholder.com/150',
-    'description': 'This is a placeholder description.',
-    'genre': ['Drama', 'Action']
-  };
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.initialIndex;
+  }
 
   @override
   Widget build(BuildContext context) {
-    // List of pages with required parameters provided
     final List<Widget> _pages = [
-      const Homepage(),
-      InfoPage(movie: _placeholderMovie), // Pass a placeholder movie
-      FavoritePage(favoriteMovies: _favoriteMovies),
-      WatchListPage(watchListMovies: _watchListMovies),
+      const HomePage(),
+      const MoviePage(),
+      const WatchList(),
     ];
 
     return Scaffold(
@@ -46,11 +38,11 @@ class _BtnNavigatorState extends State<BtnNavigator> {
         color: Colors.indigo[900],
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: 12,
+            horizontal: 20,
             vertical: 14,
           ),
           child: GNav(
-            gap: 8,
+            gap: 5,
             backgroundColor: Colors.indigo.shade900,
             activeColor: Colors.white,
             color: Colors.white,
@@ -68,15 +60,11 @@ class _BtnNavigatorState extends State<BtnNavigator> {
                 text: 'Home',
               ),
               GButton(
-                icon: Icons.info_outline,
-                text: 'Info',
+                icon: Icons.movie_filter_sharp,
+                text: 'Movies',
               ),
               GButton(
-                icon: Icons.favorite_border_outlined,
-                text: 'Favorite',
-              ),
-              GButton(
-                icon: Icons.movie_creation_rounded,
+                icon: Icons.movie_edit,
                 text: 'Library',
               ),
             ],
