@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
             Lottie.asset('assets/movie.json', height: 200),
             const SizedBox(height: 10),
             const Text(
-              'Get & save your favorite movies to your watchlist!',
+              'Get & save your favorite movies to your watch list!',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 16),
             ),
