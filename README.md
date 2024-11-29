@@ -1,6 +1,6 @@
 # Movie Recommendation Application
 
-**-----------------------------------------------------------------------------**
+**------------------------------------------------------------------------------------**
 
 ## Overview
 The **Movie Recommendation Application** allows users to explore a list of movies, add their favorite movies to a personal watchlist, and view the movies they've saved. The app provides a simple and intuitive interface to recommend movies, manage a watchlist, and keep track of user preferences.
