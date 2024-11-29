@@ -5,6 +5,10 @@
 ## Overview
 The **Movie Recommendation Application** allows users to explore a list of movies, add their favorite movies to a personal watchlist, and view the movies they've saved. The app provides a simple and intuitive interface to recommend movies, manage a watchlist, and keep track of user preferences.
 
+## Important links
+- Click [here to get API details](https://www.themoviedb.org/), but it requires an to create account.
+- Click [here to watch my Demo_video.](https://)
+
 ## Features
 - Browse a collection of movies.
 - Add movies to the watchlist.
