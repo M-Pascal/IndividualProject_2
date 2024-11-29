@@ -3,6 +3,7 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 import 'homepage.dart';
 import 'moviepage.dart';
 import 'watchlist.dart';
+// import 'detail_screen.dart';
 
 class BtnNavigator extends StatefulWidget {
   final int initialIndex; // To handle navigation from the Get Started button
@@ -14,6 +15,7 @@ class BtnNavigator extends StatefulWidget {
 
 class _BtnNavigatorState extends State<BtnNavigator> {
   late int _selectedIndex;
+  List<Map<String, String>> _watchList = [];
 
   @override
   void initState() {
@@ -21,12 +23,21 @@ class _BtnNavigatorState extends State<BtnNavigator> {
     _selectedIndex = widget.initialIndex;
   }
 
+  void addToWatchList(Map<String, String> movie) {
+    setState(() {
+      _watchList.add(movie);
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${movie['title']} added to Watch List')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> _pages = [
       const HomePage(),
-      const MoviePage(),
-      const WatchList(),
+      MoviePage(addToWatchList: addToWatchList),
+      WatchList(watchList: _watchList),
     ];
 
     return Scaffold(

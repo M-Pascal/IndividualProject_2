@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
-class WatchList extends StatefulWidget {
-  const WatchList({super.key});
+class WatchList extends StatelessWidget {
+  final List<Map<String, String>> watchList;
 
-  @override
-  State<WatchList> createState() => _WatchListState();
-}
+  const WatchList({super.key, required this.watchList});
 
-class _WatchListState extends State<WatchList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,12 +21,33 @@ class _WatchListState extends State<WatchList> {
           ),
         ),
       ),
-      body: const Center(
-        child: Text(
-          'Your Watch List is Empty',
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
+      body: watchList.isEmpty
+          ? const Center(
+              child: Text(
+                'Your Watch List is Empty',
+                style: TextStyle(fontSize: 18),
+              ),
+            )
+          : ListView.builder(
+              itemCount: watchList.length,
+              itemBuilder: (context, index) {
+                final movie = watchList[index];
+                return ListTile(
+                  leading: Image.network(
+                    movie['poster_path']!,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.error, size: 50, color: Colors.red),
+                  ),
+                  title: Text(
+                    movie['title']!,
+                    style: const TextStyle(fontSize: 18),
+                  ),
+                );
+              },
+            ),
     );
   }
 }

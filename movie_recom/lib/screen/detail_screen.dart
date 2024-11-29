@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:movie_recom/models/movie.dart';
 
 class DetailScreen extends StatefulWidget {
-  const DetailScreen({super.key, required this.movie});
+  const DetailScreen({super.key, required this.movie, required this.addToWatchList});
 
   final Movie movie;
+  final Function(Movie) addToWatchList; // Callback to add movies.
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -53,7 +54,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   filterQuality: FilterQuality.high,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) return child;
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   },
                   errorBuilder: (context, error, stackTrace) {
                     return const Center(
@@ -128,6 +129,25 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      widget.addToWatchList(widget.movie);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Added to Watch List!'),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                    ),
+                    child: const Text(
+                      'Add to Watch List',
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                   ),
                 ],
               ),

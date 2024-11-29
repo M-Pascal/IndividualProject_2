@@ -3,25 +3,40 @@ import 'package:flutter/material.dart';
 import 'package:movie_recom/api/api.dart';
 import 'package:movie_recom/models/movie.dart';
 import 'package:movie_recom/screen/detail_screen.dart';
+import 'package:movie_recom/screen/watchlist.dart';
 
 class MoviePage extends StatefulWidget {
-  const MoviePage({super.key});
+
+  final Function(Map<String, String>) addToWatchList;
+
+
+  const MoviePage({super.key, required this.addToWatchList});
 
   @override
   State<MoviePage> createState() => _MoviePageState();
 }
 
 class _MoviePageState extends State<MoviePage> {
-  late Future<List<Movie>> trendingMovie;
-  late Future<List<Movie>> topRatedMovie;
-  late Future<List<Movie>> upcomingMovie;
+  late Future<List<Movie>> trendingMovies;
+  late Future<List<Movie>> topRatedMovies;
+  late Future<List<Movie>> upcomingMovies;
+
+  final List<Movie> watchlist = []; // Stores added movies
 
   @override
   void initState() {
     super.initState();
-    trendingMovie = Api().getTrendingMovies();
-    topRatedMovie = Api().getTopRatedMovies();
-    upcomingMovie = Api().getUpcomingMovies();
+    trendingMovies = Api().getTrendingMovies();
+    topRatedMovies = Api().getTopRatedMovies();
+    upcomingMovies = Api().getUpcomingMovies();
+  }
+
+  void addToWatchlist(Movie movie) {
+    if (!watchlist.contains(movie)) {
+      setState(() {
+        watchlist.add(movie);
+      });
+    }
   }
 
   @override
@@ -39,6 +54,22 @@ class _MoviePageState extends State<MoviePage> {
             color: Colors.white,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.list, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WatchList(watchList: watchlist.map((movie) => {
+                    'title': movie.title,
+                    'poster_path': movie.poster_path,
+                  }).toList()),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -53,14 +84,17 @@ class _MoviePageState extends State<MoviePage> {
               ),
               const SizedBox(height: 6),
               FutureBuilder<List<Movie>>(
-                future: trendingMovie,
+                future: trendingMovies,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text(snapshot.error.toString()));
                   } else if (snapshot.hasData) {
-                    return TrendingSlider(snapshot: snapshot);
+                    return TrendingSlider(
+                      snapshot: snapshot,
+                      onAddToWatchlist: addToWatchlist,
+                    );
                   } else {
                     return const Center(child: Text("No data available"));
                   }
@@ -73,14 +107,17 @@ class _MoviePageState extends State<MoviePage> {
               ),
               const SizedBox(height: 6),
               FutureBuilder<List<Movie>>(
-                future: topRatedMovie,
+                future: topRatedMovies,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text(snapshot.error.toString()));
                   } else if (snapshot.hasData) {
-                    return MovieSlider(snapshot: snapshot);
+                    return MovieSlider(
+                      snapshot: snapshot,
+                      onAddToWatchlist: addToWatchlist,
+                    );
                   } else {
                     return const Center(child: Text("No data available"));
                   }
@@ -93,14 +130,17 @@ class _MoviePageState extends State<MoviePage> {
               ),
               const SizedBox(height: 6),
               FutureBuilder<List<Movie>>(
-                future: upcomingMovie,
+                future: upcomingMovies,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text(snapshot.error.toString()));
                   } else if (snapshot.hasData) {
-                    return UpcomingSlider(snapshot: snapshot);
+                    return MovieSlider(
+                      snapshot: snapshot,
+                      onAddToWatchlist: addToWatchlist,
+                    );
                   } else {
                     return const Center(child: Text("No data available"));
                   }
@@ -114,48 +154,11 @@ class _MoviePageState extends State<MoviePage> {
   }
 }
 
-// Other classes (TrendingSlider, MovieSlider, UpcomingSlider) remain unchanged.
-
-class UpcomingSlider extends StatelessWidget {
-  const UpcomingSlider({super.key, required this.snapshot});
-
-  final AsyncSnapshot<List<Movie>> snapshot;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 200,
-      width: double.infinity,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const BouncingScrollPhysics(),
-        itemCount: snapshot.data!.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: SizedBox(
-                height: 200,
-                width: 150,
-                child: Image.network(
-                  'https://image.tmdb.org/t/p/w500${snapshot.data![index].poster_path}',
-                  fit: BoxFit.cover,
-                  filterQuality: FilterQuality.high,
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
 class MovieSlider extends StatelessWidget {
-  const MovieSlider({super.key, required this.snapshot});
+  const MovieSlider({super.key, required this.snapshot, required this.onAddToWatchlist});
 
   final AsyncSnapshot<List<Movie>> snapshot;
+  final Function(Movie) onAddToWatchlist;
 
   @override
   Widget build(BuildContext context) {
@@ -167,25 +170,35 @@ class MovieSlider extends StatelessWidget {
         physics: const BouncingScrollPhysics(),
         itemCount: snapshot.data!.length,
         itemBuilder: (context, index) {
+          final movie = snapshot.data![index];
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
               onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailScreen(movie: snapshot.data![index]),
+                  builder: (context) => DetailScreen(movie: movie, addToWatchList: onAddToWatchlist),
                 ),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  height: 200,
-                  width: 150,
-                  child: Image.network(
-                    'https://image.tmdb.org/t/p/w500${snapshot.data![index].poster_path}',
-                    fit: BoxFit.cover,
-                    filterQuality: FilterQuality.high,
-                  ),
+                child: Stack(
+                  children: [
+                    Image.network(
+                      'https://image.tmdb.org/t/p/w500${movie.poster_path}',
+                      height: 200,
+                      width: 150,
+                      fit: BoxFit.cover,
+                    ),
+                    Positioned(
+                      bottom: 10,
+                      right: 10,
+                      child: IconButton(
+                        icon: const Icon(Icons.add_circle, color: Colors.white),
+                        onPressed: () => onAddToWatchlist(movie),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -197,9 +210,10 @@ class MovieSlider extends StatelessWidget {
 }
 
 class TrendingSlider extends StatelessWidget {
-  const TrendingSlider({super.key, required this.snapshot});
+  const TrendingSlider({super.key, required this.snapshot, required this.onAddToWatchlist});
 
   final AsyncSnapshot<List<Movie>> snapshot;
+  final Function(Movie) onAddToWatchlist;
 
   @override
   Widget build(BuildContext context) {
@@ -207,24 +221,34 @@ class TrendingSlider extends StatelessWidget {
       width: double.infinity,
       child: CarouselSlider.builder(
         itemCount: snapshot.data!.length,
-        itemBuilder: (context, itemIndex, pageViewIndex) {
+        itemBuilder: (context, index, realIndex) {
+          final movie = snapshot.data![index];
           return GestureDetector(
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailScreen(movie: snapshot.data![itemIndex]),
+                builder: (context) => DetailScreen(movie: movie, addToWatchList: onAddToWatchlist),
               ),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: SizedBox(
-                height: 300,
-                width: 200,
-                child: Image.network(
-                  'https://image.tmdb.org/t/p/w500${snapshot.data![itemIndex].poster_path}',
-                  filterQuality: FilterQuality.high,
-                  fit: BoxFit.cover,
-                ),
+              child: Stack(
+                children: [
+                  Image.network(
+                    'https://image.tmdb.org/t/p/w500${movie.poster_path}',
+                    height: 300,
+                    width: 200,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    bottom: 20,
+                    right: 20,
+                    child: IconButton(
+                      icon: const Icon(Icons.add_circle, color: Colors.white),
+                      onPressed: () => onAddToWatchlist(movie),
+                    ),
+                  ),
+                ],
               ),
             ),
           );
